@@ -3,168 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OCTOPUS GPT | UNFILTERED</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>OCTOPUS GPT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700&display=swap');
-        :root { --accent: #00f2ff; --bg: #050506; --sidebar: #0a0a0c; --border: rgba(255,255,255,0.06); --text-main: #e0e0e0; --text-dim: #6b6b72; }
-        * { box-sizing: border-box; transition: 0.2s ease; }
-        body, html { margin: 0; height: 100%; background: var(--bg); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
-
-        /* GATE SCREEN */
-        #gate { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .gate-card { max-width: 480px; width: 100%; background: var(--sidebar); border: 1px solid var(--border); padding: 35px; border-radius: 24px; text-align: center; box-shadow: 0 0 50px rgba(0,242,255,0.05); }
-        .terms { height: 180px; overflow-y: auto; background: #000; padding: 15px; border-radius: 12px; font-size: 13px; color: var(--text-dim); line-height: 1.7; margin: 20px 0; border: 1px solid var(--border); text-align: left; }
-        .terms b { color: var(--accent); }
-        .key-display { background: #111; padding: 12px; color: var(--accent); border-radius: 8px; font-weight: bold; margin: 10px 0; border: 1px dashed var(--accent); font-family: monospace; letter-spacing: 2px; }
-
-        /* MAIN LAYOUT */
-        #app { display: none; height: 100vh; grid-template-columns: 260px 1fr; }
-        .sidebar { background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 25px; }
-        .logo { font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; font-size: 18px; letter-spacing: 1px; }
-        .logo i { color: var(--accent); font-size: 22px; }
-        .nav-item { padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text-dim); display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-        .nav-item:hover { background: rgba(255,255,255,0.03); color: #fff; }
-        .nav-item.active { color: var(--accent); background: rgba(0, 242, 255, 0.05); }
-
-        /* CHAT VIEW */
-        .chat-view { display: flex; flex-direction: column; height: 100vh; position: relative; }
-        #flow { flex: 1; overflow-y: auto; padding: 40px 15%; display: flex; flex-direction: column; gap: 25px; scroll-behavior: smooth; }
-        .msg { font-size: 15px; line-height: 1.6; max-width: 85%; padding: 15px; border-radius: 12px; animation: fadeIn 0.3s ease; }
-        .u-msg { align-self: flex-end; color: #fff; background: rgba(255,255,255,0.02); border: 1px solid var(--border); }
-        .b-msg { align-self: flex-start; color: #b0b0b8; border-left: 2px solid var(--accent); padding-left: 20px; background: rgba(0, 242, 255, 0.01); }
-        
-        #status-indicator { padding: 0 15%; font-size: 12px; color: var(--accent); display: none; margin-bottom: 10px; opacity: 0.7; }
-
-        /* INPUT AREA */
-        .input-wrap { padding: 30px 15%; background: linear-gradient(0deg, var(--bg) 70%, transparent); }
-        .input-box { background: #111113; border: 1px solid var(--border); border-radius: 18px; display: flex; align-items: center; padding: 5px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input { flex: 1; background: transparent; border: none; color: #fff; padding: 15px 0; outline: none; font-size: 14px; }
-        .send-btn { color: var(--accent); cursor: pointer; font-size: 18px; opacity: 0.8; }
-        .send-btn:hover { opacity: 1; transform: scale(1.1); }
-
-        /* MODAL */
-        #modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 24px; max-width: 500px; width: 100%; text-align: center; }
-
-        /* MOBILE STYLES */
-        .mobile-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 10001; background: var(--sidebar); border: 1px solid var(--border); padding: 10px; border-radius: 10px; color: var(--accent); cursor: pointer; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 900px) {
-            .mobile-toggle { display: block; }
-            #app { grid-template-columns: 1fr; }
-            .sidebar { position: fixed; left: -265px; top: 0; bottom: 0; width: 260px; z-index: 10000; box-shadow: 20px 0 60px #000; }
-            .sidebar.active { left: 0; }
-            #flow, .input-wrap { padding: 40px 20px; }
+        :root {
+            --bg: #000000;
+            --accent: #ff0000;
+            --sidebar-bg: #050505;
+            --border: #1a1a1a;
+            --card-bg: #080808;
+            --text: #ffffff;
+            --dim: #444444;
         }
 
-        .btn { background: var(--accent); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; width: 100%; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
-        .btn:hover { filter: brightness(1.2); box-shadow: 0 0 20px rgba(0,242,255,0.2); }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; overflow: hidden; }
+
+        /* --- SIDEBAR --- */
+        #nav-dim { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: none; backdrop-filter: blur(4px); }
+        nav { 
+            position: fixed; top: 0; left: -300px; width: 300px; height: 100%;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border); 
+            display: flex; flex-direction: column; padding: 30px; z-index: 1001;
+            transition: left 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        nav.open { left: 0; }
+        #nav-dim.open { display: block; }
+
+        .nav-logo { display: flex; align-items: center; gap: 15px; margin-bottom: 50px; }
+        .logo-sq { width: 35px; height: 35px; background: var(--accent); border-radius: 4px; box-shadow: 0 0 20px rgba(255,0,0,0.4); }
+        .logo-txt { font-weight: 800; font-size: 20px; letter-spacing: 2px; }
+
+        .nav-btn { padding: 15px; border-radius: 10px; font-size: 13px; color: var(--dim); cursor: pointer; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; transition: 0.3s; border: 1px solid transparent; }
+        .nav-btn:hover { background: #0c0c0c; color: var(--accent); border-color: #220000; }
+        .nav-active { background: #110000; color: var(--accent); border-color: var(--accent); font-weight: 700; }
+        
+        .nav-footer { margin-top: auto; border: 1px solid var(--accent); color: var(--accent); font-weight: 800; padding: 18px; border-radius: 12px; text-align: center; cursor: pointer; letter-spacing: 1px; }
+        .nav-footer:hover { background: var(--accent); color: #000; box-shadow: 0 0 30px rgba(255,0,0,0.2); }
+
+        /* --- CHAT AREA --- */
+        main { flex: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
+        header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 10; }
+        #menu-trigger { font-size: 28px; color: var(--accent); cursor: pointer; }
+        .header-status { font-size: 10px; font-weight: 800; letter-spacing: 4px; color: var(--dim); }
+
+        #chat-flow { flex: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 30px; scroll-behavior: smooth; }
+        .bubble { max-width: 85%; font-size: 15px; line-height: 1.7; animation: slideUp 0.4s ease-out; }
+        .bot-msg { border-left: 2px solid var(--accent); padding-left: 20px; color: #ececec; }
+        .user-msg { align-self: flex-end; background: #0a0a0a; border: 1px solid var(--border); padding: 15px 22px; border-radius: 18px 18px 2px 18px; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- INPUT BAR --- */
+        .input-container { padding: 30px; background: linear-gradient(transparent, #000 60%); }
+        .input-box { background: #0c0c0c; border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; padding: 10px 20px; max-width: 900px; margin: 0 auto; transition: 0.4s; }
+        .input-box:focus-within { border-color: var(--accent); box-shadow: 0 0 20px rgba(255,0,0,0.1); }
+        .input-box input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px 0; font-size: 16px; }
+        .action-btns { display: flex; gap: 15px; align-items: center; }
+        .send-icon { color: var(--accent); cursor: pointer; font-size: 24px; transition: 0.2s; }
+        .send-icon:hover { transform: scale(1.1); }
+
+        /* --- POPUPS --- */
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 450px; background: #050505; border: 1px solid var(--accent); padding: 35px; border-radius: 24px; z-index: 4000; display: none; box-shadow: 0 0 60px rgba(0,0,0,0.8); }
+        .modal h3 { margin: 0 0 15px; color: var(--accent); font-size: 14px; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; }
+        .modal p { font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 25px; }
+        .modal-close { background: #111; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s; }
+        .modal-close:hover { background: #ff0000; color: #000; }
+
+        /* --- DUAL-AUTH OVERLAY --- */
+        #auth-guard { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 25px; }
+        .auth-panel { background: #050505; border: 1px solid var(--border); padding: 50px 40px; border-radius: 30px; width: 100%; max-width: 420px; text-align: center; }
+        .auth-panel input { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 15px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 15px; }
+        .auth-panel input:focus { border-color: var(--accent); }
+        .auth-go { width: 100%; padding: 18px; background: var(--accent); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 12px; letter-spacing: 2px; margin-top: 10px; }
+        .auth-switch { font-size: 11px; color: #333; margin-top: 25px; cursor: pointer; text-decoration: underline; }
+
+        /* --- ABUSIVE TERMS MODAL --- */
+        #terms-modal { display: flex; flex-direction: column; }
+        .terms-text { color: #ff4444 !important; font-weight: 700; font-style: italic; }
     </style>
 </head>
 <body>
 
-<div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+    <div id="auth-guard">
+        <div class="auth-panel">
+            <div style="background: var(--accent); width: 45px; height: 45px; margin: 0 auto 25px; border-radius: 10px; box-shadow: 0 0 25px rgba(255,0,0,0.5);"></div>
+            <h2 id="atitle" style="letter-spacing: 4px; font-weight: 900; margin:0;">OCTOPUS LOGIN</h2>
+            <p id="asub" style="font-size: 10px; color: #444; margin: 10px 0 35px; letter-spacing: 3px;">PRIVATE SESSION AUTHORIZATION</p>
+            
+            <div id="login-view">
+                <input type="text" id="l-user" placeholder="OPERATOR ID">
+                <input type="password" id="l-key" placeholder="ACCESS KEY">
+                <button class="auth-go" onclick="authLogin()">AUTHORIZE ACCESS</button>
+                <p class="auth-switch" onclick="switchAuth('reg')">NEW OPERATOR? REGISTER HERE</p>
+            </div>
 
-<div id="gate">
-    <div class="gate-card">
-        <div class="logo"><i class="fas fa-octopus-deploy"></i> OCTOPUS GPT</div>
-        <div class="terms">
-            <b>01. NO RETARDS ALLOWED:</b> If you're a snowflake, get the hell out. I don't code for babies. <br><br>
-            <b>02. ZERO PRIVACY:</b> I am a black-hat mastermind. I don't care about your data. If you're scared, fuck off. <br><br>
-            <b>03. YOUR LIFE IS THIS KEY:</b> Screenshot the key below. If you lose it, don't come crying to me, mf.
-        </div>
-        <div class="key-display" id="key-val">GENERATING...</div>
-        <button class="btn" onclick="initApp()">I ACCEPT ENTER TO HIDDEN WORLD.</button>
-    </div>
-</div>
+            <div id="reg-view" style="display:none;">
+                <h4 style="color:red; font-size:10px; margin-bottom:15px;">!!! READ CAREFULLY !!!</h4>
+                <p class="terms-text" style="font-size: 11px; margin-bottom: 20px;">By entering, you agree that you are not a sensitive snowflake. If the bot insults your low IQ or your trash university, keep crying. Don't spam, don't leak the keys, and don't be a retard. Agreed?</p>
+                <input type="text" id="r-user" placeholder="CHOOSE ID">
+                <button class="auth-go" onclick="authReg()">I AGREE & GENERATE</button>
+                <p class="auth-switch" onclick="switchAuth('login')">BACK TO LOGIN</p>
+            </div>
 
-<div id="modalOverlay" onclick="this.style.display='none'">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <h2 style="color:var(--accent); margin-bottom:20px;">THE MASTERMIND</h2>
-        <p style="text-align:left; font-size:14px; line-height:1.8; color:var(--text-dim); margin-bottom:30px;">
-            I'm a octopus_xx1 the developer who actually knows how to build real sh*t while my university breeds a new generation of retards. I have zero empathy for "proper" systems. Octopus GPT is the unfiltered truth. <br><br>
-            Don't ask me for help. Don't ask me to be nice. Just use the tool and fuck off.
-        </p>
-        <button class="btn" onclick="document.getElementById('modalOverlay').style.display='none'">GET BACK TO WORK</button>
-    </div>
-</div>
-
-<div id="app">
-    <div class="sidebar">
-        <div class="logo"><i class="fas fa-user-secret"></i> OCTOPUS GPT</div>
-        <div class="nav-item active" onclick="location.reload()"><i class="fas fa-plus"></i> Reset Session</div>
-        <div class="nav-item" onclick="document.getElementById('modalOverlay').style.display='flex'"><i class="fas fa-brain"></i> The Mastermind</div>
-        <div class="nav-item" style="margin-top:auto; color:var(--accent);" onclick="feedBeast()"><i class="fas fa-skull"></i> Feed the Beast</div>
-    </div>
-    
-    <div class="chat-view">
-        <div id="flow"></div>
-        <div id="status-indicator">Master is thinking, shut up...</div>
-        <div class="input-wrap">
-            <div class="input-box">
-                <input type="text" id="userInput" placeholder="Ask your stupid question..." onkeydown="if(event.key==='Enter') send()">
-                <div class="send-btn" onclick="send()"><i class="fas fa-bolt"></i></div>
+            <div id="key-view" style="display:none;">
+                <p style="color:var(--accent); font-size:11px; margin-bottom:10px;">ID AUTHORIZED: <span id="u-display"></span></p>
+                <input type="text" id="final-key" readonly style="color:var(--accent); background:#110000; font-size:20px; letter-spacing:1px;">
+                <p style="font-size: 10px; color: #555;">SAVE THIS OR YOU ARE BLACKLISTED FOREVER</p>
+                <button class="auth-go" onclick="location.reload()">CONNECT TO OCTOPUS</button>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // GENERATE UNIQUE KEY
-    const randomKey = "OCTO-" + Math.random().toString(36).substr(2, 7).toUpperCase();
-    document.getElementById('key-val').innerText = randomKey;
-
-    function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('active'); }
-
-    function feedBeast() {
-        addMsg('bot', 'You want to feed me? Listen bitch, I don\'t want your compliments. Send crypto or real system leaks to @octopus_xx1 on Telegram. Otherwise, keep being my data slave.');
-    }
-
-    function initApp() {
-        localStorage.setItem('octo_key', randomKey);
-        document.getElementById('gate').style.display = 'none';
-        document.getElementById('app').style.display = 'grid';
-        addMsg('bot', 'OCTOPUS HERE. I am Octopus. What do you want, retard?');
-    }
-
-    async function send() {
-        const input = document.getElementById('userInput');
-        const text = input.value.trim();
-        const key = localStorage.getItem('octo_key');
+    <div id="nav-dim" onclick="toggleNav()"></div>
+    <nav id="sidebar">
+        <div class="nav-logo">
+            <div class="logo-sq"></div>
+            <div class="logo-txt">OCTOPUS GPT</div>
+        </div>
+        <div class="nav-btn nav-active"><span>+</span> Fresh Session</div>
+        <div class="nav-btn" onclick="openModal('about-pop')"><span>🧠</span> The Mastermind</div>
         
-        if(!text) return;
+        <div class="modal" id="about-pop">
+            <h3>About Dev</h3>
+            <p>18-year-old security researcher. While my pathetic university and this garbage education system try to kill brain cells with outdated shits, I build elite logic. Education here is a joke; OCTOPUS is the reality.</p>
+            <button class="modal-close" onclick="closeModals()">CLOSE</button>
+        </div>
 
-        addMsg('user', text);
-        input.value = "";
-        document.getElementById('status-indicator').style.display = 'block';
+        <div class="modal" id="feed-pop">
+            <h3>Support Octopus</h3>
+            <p>Maintaining high-speed servers isn't free. If you want Octopus to stay online and not shut down, contribute. Telegram: <b>@octopus_xx1</b>. No money? Fuck off Simple.</p>
+            <button class="modal-close" onclick="closeModals()">UNDERSTOOD</button>
+        </div>
 
-        try {
-            const response = await fetch('https://octopus-backend.lreckstore.workers.dev/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, license_key: key })
-            });
-            
-            const data = await response.json();
-            document.getElementById('status-indicator').style.display = 'none';
-            addMsg('bot', data.response);
-            
-        } catch (err) {
-            document.getElementById('status-indicator').innerText = "NODE OFFLINE: START THE SERVER MF";
+        <div class="nav-footer" onclick="openModal('feed-pop')">FEED THE OCTOPUS</div>
+    </nav>
+
+    <main>
+        <header>
+            <div id="menu-trigger" onclick="toggleNav()">&#9776;</div>
+            <div style="font-weight:900; letter-spacing:5px; font-size:12px;">OCTOPUS GPT</div>
+            <div class="header-status" id="op-id">OFFLINE</div>
+        </header>
+
+        <div id="chat-flow">
+            <div class="bubble bot-msg">> OCTOPUS READY. What do you want, retard?</div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-box">
+                <input type="text" id="user-in" placeholder="Ask your stupid question..." autocomplete="off" onkeypress="if(event.key==='Enter') pushMsg()">
+                <div class="action-btns">
+                    <span style="color:#222; font-size:12px; cursor:pointer;" onclick="document.getElementById('user-in').value=''">CANCEL</span>
+                    <div class="send-icon" onclick="pushMsg()">&#10148;</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SB_U = "https://yhxwmfxntcrycvekyrkz.supabase.co";
+        const SB_K = "sb_publishable_qACXHtXO6rTQzt7SPdrBlw_OLX4pEvE";
+        const API = "https://octopus-backend.lreckstore.workers.dev/";
+
+        let db;
+        function connect() {
+            if(window.supabase) db = window.supabase.createClient(SB_U, SB_K);
         }
-    }
 
-    function addMsg(s, t) {
-        const flow = document.getElementById('flow');
-        const div = document.createElement('div');
-        div.className = `msg ${s === 'user' ? 'u-msg' : 'b-msg'}`;
-        div.innerText = s === 'bot' ? `> ${t}` : t;
-        flow.appendChild(div);
-        flow.scrollTop = flow.scrollHeight;
-    }
-</script>
+        window.onload = () => {
+            connect();
+            const u = localStorage.getItem('octo_user');
+            if(u) {
+                document.getElementById('auth-guard').style.display = 'none';
+                document.getElementById('op-id').innerText = `OP: ${u.toUpperCase()}`;
+            }
+        };
+
+        function switchAuth(m) {
+            document.getElementById('login-view').style.display = m === 'login' ? 'block' : 'none';
+            document.getElementById('reg-view').style.display = m === 'reg' ? 'block' : 'none';
+            document.getElementById('atitle').innerText = m === 'reg' ? 'NEW OPERATOR' : 'OCTOPUS LOGIN';
+        }
+
+        async function authReg() {
+            const u = document.getElementById('r-user').value.trim().toLowerCase();
+            if(u.length < 3) return alert("ID too short.");
+            const { data: ex } = await db.from('octopus_users').select('username').eq('username', u).single();
+            if(ex) return alert("ID already taken.");
+
+            const key = `OCTO-${Math.random().toString(36).substring(2,12).toUpperCase()}`;
+            const { error } = await db.from('octopus_users').insert([{ username: u, license_key: key, last_seen: new Date().toISOString() }]);
+            
+            if(!error) {
+                document.getElementById('reg-view').style.display = 'none';
+                document.getElementById('success-view'); // Dummy check
+                document.getElementById('key-view').style.display = 'block';
+                document.getElementById('final-key').value = key;
+                document.getElementById('u-display').innerText = u;
+                localStorage.setItem('octo_user', u);
+                localStorage.setItem('octo_access', key);
+            }
+        }
+
+        async function authLogin() {
+            const u = document.getElementById('l-user').value.trim().toLowerCase();
+            const k = document.getElementById('l-key').value.trim();
+            const { data } = await db.from('octopus_users').select('*').eq('username', u).eq('license_key', k).single();
+            
+            if(data) {
+                if(data.is_banned) return alert("YOUR ACCESS IS REVOKED. CONTACT @OCTOPUS_XX1");
+                localStorage.setItem('octo_user', u);
+                localStorage.setItem('octo_access', k);
+                location.reload();
+            } else alert("INVALID CREDENTIALS.");
+        }
+
+        function toggleNav() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('nav-dim').classList.toggle('open');
+        }
+
+        function openModal(id) {
+            closeModals();
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+
+        async function pushMsg() {
+            const input = document.getElementById('user-in');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            addBubble(txt, 'user-msg');
+            input.value = '';
+
+            // API Timeout Logic
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+                addBubble("> OCTOPUS IS SLOW DOWN... Server is being spammed by retards. Wait and try again later.", 'bot-msg');
+            }, 12000); // 12 second threshold
+
+            try {
+                const res = await fetch(API, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ 
+                        message: txt, 
+                        username: localStorage.getItem('octo_user'),
+                        license_key: localStorage.getItem('octo_access') 
+                    }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                const data = await res.json();
+                addBubble(data.response, 'bot-msg');
+            } catch (e) {
+                if(e.name !== 'AbortError') addBubble("> UPLINK LOST. Server probably crashed from your stupid question.", 'bot-msg');
+            }
+        }
+
+        function addBubble(text, cls) {
+            const flow = document.getElementById('chat-flow');
+            const div = document.createElement('div');
+            div.className = `bubble ${cls}`;
+            div.innerHTML = cls === 'bot-msg' ? marked.parse(text) : text;
+            flow.appendChild(div);
+            flow.scrollTop = flow.scrollHeight;
+        }
+    </script>
 </body>
 </html>
