@@ -42,7 +42,7 @@
         .nav-btn:hover { background: #0c0c0c; color: var(--accent); border-color: #220000; }
         .nav-active { background: #110000; color: var(--accent); border-color: var(--accent); font-weight: 700; }
         
-        .nav-footer { margin-top: auto; border: 1px solid var(--accent); color: var(--accent); font-weight: 800; padding: 18px; border-radius: 12px; text-align: center; cursor: pointer; letter-spacing: 1px; }
+        .nav-footer { margin-top: auto; border: 1px solid var(--accent); color: var(--accent); font-weight: 800; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 11px; letter-spacing: 1px; transition: 0.3s; }
         .nav-footer:hover { background: var(--accent); color: #000; box-shadow: 0 0 30px rgba(255,0,0,0.2); }
 
         /* --- CHAT AREA --- */
@@ -56,6 +56,8 @@
         .bot-msg { border-left: 2px solid var(--accent); padding-left: 20px; color: #ececec; }
         .user-msg { align-self: flex-end; background: #0a0a0a; border: 1px solid var(--border); padding: 15px 22px; border-radius: 18px 18px 2px 18px; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
+        .thinking { opacity: 0.5; font-style: italic; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 0.7; } 100% { opacity: 0.3; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- INPUT BAR --- */
@@ -63,28 +65,24 @@
         .input-box { background: #0c0c0c; border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; padding: 10px 20px; max-width: 900px; margin: 0 auto; transition: 0.4s; }
         .input-box:focus-within { border-color: var(--accent); box-shadow: 0 0 20px rgba(255,0,0,0.1); }
         .input-box input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px 0; font-size: 16px; }
-        .action-btns { display: flex; gap: 15px; align-items: center; }
         .send-icon { color: var(--accent); cursor: pointer; font-size: 24px; transition: 0.2s; }
-        .send-icon:hover { transform: scale(1.1); }
 
-        /* --- POPUPS --- */
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 450px; background: #050505; border: 1px solid var(--accent); padding: 35px; border-radius: 24px; z-index: 4000; display: none; box-shadow: 0 0 60px rgba(0,0,0,0.8); }
+        /* --- MODALS --- */
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 450px; background: #050505; border: 1px solid var(--accent); padding: 35px; border-radius: 24px; z-index: 4000; display: none; }
         .modal h3 { margin: 0 0 15px; color: var(--accent); font-size: 14px; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; }
         .modal p { font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 25px; }
-        .modal-close { background: #111; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s; }
-        .modal-close:hover { background: #ff0000; color: #000; }
+        .modal-close { background: #111; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; }
 
-        /* --- DUAL-AUTH OVERLAY --- */
+        /* --- DUAL-AUTH & TERMS --- */
         #auth-guard { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 25px; }
-        .auth-panel { background: #050505; border: 1px solid var(--border); padding: 50px 40px; border-radius: 30px; width: 100%; max-width: 420px; text-align: center; }
-        .auth-panel input { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 15px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 15px; }
-        .auth-panel input:focus { border-color: var(--accent); }
-        .auth-go { width: 100%; padding: 18px; background: var(--accent); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 12px; letter-spacing: 2px; margin-top: 10px; }
+        .auth-panel { background: #050505; border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 100%; max-width: 420px; text-align: center; }
+        .auth-panel input { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 15px; border-radius: 12px; text-align: center; }
+        .auth-go { width: 100%; padding: 18px; background: var(--accent); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 12px; letter-spacing: 2px; }
         .auth-switch { font-size: 11px; color: #333; margin-top: 25px; cursor: pointer; text-decoration: underline; }
 
-        /* --- ABUSIVE TERMS MODAL --- */
-        #terms-modal { display: flex; flex-direction: column; }
-        .terms-text { color: #ff4444 !important; font-weight: 700; font-style: italic; }
+        .terms-box { background: #110000; border: 1px solid #330000; padding: 15px; border-radius: 12px; text-align: left; margin-bottom: 20px; }
+        .terms-box ol { padding-left: 20px; margin: 0; color: #ff4444; font-size: 11px; font-weight: 600; line-height: 1.5; }
+        .terms-box li { margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -93,7 +91,7 @@
         <div class="auth-panel">
             <div style="background: var(--accent); width: 45px; height: 45px; margin: 0 auto 25px; border-radius: 10px; box-shadow: 0 0 25px rgba(255,0,0,0.5);"></div>
             <h2 id="atitle" style="letter-spacing: 4px; font-weight: 900; margin:0;">OCTOPUS LOGIN</h2>
-            <p id="asub" style="font-size: 10px; color: #444; margin: 10px 0 35px; letter-spacing: 3px;">PRIVATE SESSION AUTHORIZATION</p>
+            <p style="font-size: 10px; color: #444; margin: 10px 0 35px; letter-spacing: 3px;">PRIVATE SESSION AUTHORIZATION</p>
             
             <div id="login-view">
                 <input type="text" id="l-user" placeholder="OPERATOR ID">
@@ -103,44 +101,48 @@
             </div>
 
             <div id="reg-view" style="display:none;">
-                <h4 style="color:red; font-size:10px; margin-bottom:15px;">!!! READ CAREFULLY !!!</h4>
-                <p class="terms-text" style="font-size: 11px; margin-bottom: 20px;">By entering, you agree that you are not a sensitive snowflake. If the bot insults your low IQ or your trash university, keep crying. Don't spam, don't leak the keys, and don't be a retard. Agreed?</p>
-                <input type="text" id="r-user" placeholder="CHOOSE ID">
-                <button class="auth-go" onclick="authReg()">I AGREE & GENERATE</button>
+                <h4 style="color:red; font-size:10px; margin-bottom:10px; letter-spacing:2px;">GATEWAY PROTOCOLS</h4>
+                <div class="terms-box">
+                    <ol>
+                        <li>Sensitive snowflakes or "safe-space" seekers: Exit now.</li>
+                        <li>Octopus will mock your low-tier education and trash IQ.</li>
+                        <li>Spamming results in a permanent hardware/IP blacklist.</li>
+                        <li>No refunds, no mercy. You are here at your own risk.</li>
+                    </ol>
+                </div>
+                <input type="text" id="r-user" placeholder="CHOOSE OPERATOR ID">
+                <button class="auth-go" onclick="authReg()">I AGREE & INITIALIZE</button>
                 <p class="auth-switch" onclick="switchAuth('login')">BACK TO LOGIN</p>
             </div>
 
             <div id="key-view" style="display:none;">
-                <p style="color:var(--accent); font-size:11px; margin-bottom:10px;">ID AUTHORIZED: <span id="u-display"></span></p>
-                <input type="text" id="final-key" readonly style="color:var(--accent); background:#110000; font-size:20px; letter-spacing:1px;">
-                <p style="font-size: 10px; color: #555;">SAVE THIS KEY OR SO YOU CAN LOGIN IN FUTURE</p>
-                <button class="auth-go" onclick="location.reload()">LOGIN TO OCTOPUS GPT</button>
+                <p style="color:var(--accent); font-size:11px;">ID AUTHORIZED: <span id="u-display"></span></p>
+                <input type="text" id="final-key" readonly style="color:var(--accent); background:#110000; font-size:18px;">
+                <p style="font-size: 10px; color: #555;">MUST SAVE THIS KEY FOR LATER ACCESS</p>
+                <button class="auth-go" onclick="location.reload()">LOGIN NOW</button>
             </div>
         </div>
     </div>
 
     <div id="nav-dim" onclick="toggleNav()"></div>
     <nav id="sidebar">
-        <div class="nav-logo">
-            <div class="logo-sq"></div>
-            <div class="logo-txt">OCTOPUS GPT</div>
-        </div>
+        <div class="nav-logo"><div class="logo-sq"></div><div class="logo-txt">OCTOPUS GPT</div></div>
         <div class="nav-btn nav-active"><span>+</span> Fresh Session</div>
         <div class="nav-btn" onclick="openModal('about-pop')"><span>🧠</span> The Mastermind</div>
         
         <div class="modal" id="about-pop">
             <h3>About Dev</h3>
-            <p>18-year-old security researcher. While my pathetic university and this garbage education system try to kill brain cells with outdated shits, I build elite logic. Education here is a joke; OCTOPUS is the reality.</p>
+            <p>19-year-old security researcher. While my FUCKED UP university and this garbage education system try to kill brain cells with outdated shits, I build elite logic.</p>
             <button class="modal-close" onclick="closeModals()">CLOSE</button>
         </div>
 
         <div class="modal" id="feed-pop">
             <h3>Support Octopus</h3>
-            <p>Maintaining high-speed servers isn't free. If you want Octopus to stay online and not shut down, contribute. Telegram: <b>@octopus_xx1</b>. No money? Fuck off Simple.</p>
+            <p>Maintaining high-speed servers isn't free. Telegram: <b>@octopus_xx1</b>. No money? Fuck off.</p>
             <button class="modal-close" onclick="closeModals()">UNDERSTOOD</button>
         </div>
 
-        <div class="nav-footer" onclick="openModal('feed-pop')">FEED THE OCTOPUS</div>
+        <div class="nav-footer" onclick="openModal('feed-pop')">FEED THE OCTOPUS 🐙</div>
     </nav>
 
     <main>
@@ -157,10 +159,7 @@
         <div class="input-container">
             <div class="input-box">
                 <input type="text" id="user-in" placeholder="Ask your stupid question..." autocomplete="off" onkeypress="if(event.key==='Enter') pushMsg()">
-                <div class="action-btns">
-                    <span style="color:#222; font-size:12px; cursor:pointer;" onclick="document.getElementById('user-in').value=''">CANCEL</span>
-                    <div class="send-icon" onclick="pushMsg()">&#10148;</div>
-                </div>
+                <div class="send-icon" onclick="pushMsg()">&#10148;</div>
             </div>
         </div>
     </main>
@@ -171,9 +170,7 @@
         const API = "https://octopus-backend.lreckstore.workers.dev/";
 
         let db;
-        function connect() {
-            if(window.supabase) db = window.supabase.createClient(SB_U, SB_K);
-        }
+        function connect() { if(window.supabase) db = window.supabase.createClient(SB_U, SB_K); }
 
         window.onload = () => {
             connect();
@@ -194,14 +191,13 @@
             const u = document.getElementById('r-user').value.trim().toLowerCase();
             if(u.length < 3) return alert("ID too short.");
             const { data: ex } = await db.from('octopus_users').select('username').eq('username', u).single();
-            if(ex) return alert("ID already taken.");
+            if(ex) return alert("ID taken.");
 
             const key = `OCTO-${Math.random().toString(36).substring(2,12).toUpperCase()}`;
             const { error } = await db.from('octopus_users').insert([{ username: u, license_key: key, last_seen: new Date().toISOString() }]);
             
             if(!error) {
                 document.getElementById('reg-view').style.display = 'none';
-                document.getElementById('success-view'); // Dummy check
                 document.getElementById('key-view').style.display = 'block';
                 document.getElementById('final-key').value = key;
                 document.getElementById('u-display').innerText = u;
@@ -214,27 +210,12 @@
             const u = document.getElementById('l-user').value.trim().toLowerCase();
             const k = document.getElementById('l-key').value.trim();
             const { data } = await db.from('octopus_users').select('*').eq('username', u).eq('license_key', k).single();
-            
             if(data) {
-                if(data.is_banned) return alert("YOUR ACCESS IS REVOKED. CONTACT @OCTOPUS_XX1");
+                if(data.is_banned) return alert("BLACKLISTED.");
                 localStorage.setItem('octo_user', u);
                 localStorage.setItem('octo_access', k);
                 location.reload();
             } else alert("INVALID CREDENTIALS.");
-        }
-
-        function toggleNav() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('nav-dim').classList.toggle('open');
-        }
-
-        function openModal(id) {
-            closeModals();
-            document.getElementById(id).style.display = 'block';
-        }
-
-        function closeModals() {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
 
         async function pushMsg() {
@@ -245,12 +226,19 @@
             addBubble(txt, 'user-msg');
             input.value = '';
 
-            // API Timeout Logic
+            const flow = document.getElementById('chat-flow');
+            const thinkDiv = document.createElement('div');
+            thinkDiv.className = 'bubble bot-msg thinking';
+            thinkDiv.innerText = '> OCTOPUS IS ANALYZING YOUR STUPIDITY...';
+            flow.appendChild(thinkDiv);
+            flow.scrollTop = flow.scrollHeight;
+
             const controller = new AbortController();
             const timeoutId = setTimeout(() => {
                 controller.abort();
-                addBubble("> OCTOPUS IS SLOW DOWN... Server is being spammed by retards. Wait and try again later.", 'bot-msg');
-            }, 12000); // 12 second threshold
+                thinkDiv.classList.remove('thinking');
+                thinkDiv.innerText = "> OCTOPUS IS SLOW DOWN... Too many retards active.";
+            }, 15000); 
 
             try {
                 const res = await fetch(API, {
@@ -265,9 +253,11 @@
                 });
                 clearTimeout(timeoutId);
                 const data = await res.json();
-                addBubble(data.response, 'bot-msg');
+                thinkDiv.classList.remove('thinking');
+                thinkDiv.innerHTML = marked.parse(data.response);
+                flow.scrollTop = flow.scrollHeight;
             } catch (e) {
-                if(e.name !== 'AbortError') addBubble("> UPLINK LOST. Server probably crashed from your stupid question.", 'bot-msg');
+                if(e.name !== 'AbortError') { thinkDiv.classList.remove('thinking'); thinkDiv.innerText = "> UPLINK LOST."; }
             }
         }
 
@@ -279,6 +269,10 @@
             flow.appendChild(div);
             flow.scrollTop = flow.scrollHeight;
         }
+
+        function toggleNav() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('nav-dim').classList.toggle('open'); }
+        function openModal(id) { closeModals(); document.getElementById(id).style.display = 'block'; }
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
     </script>
 </body>
 </html>
