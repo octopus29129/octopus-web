@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OCTOPUS GPT</title>
+    <title>OCTOPUS GPT | MASTER ARCHITECT</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17,9 +17,10 @@
             --border: #1a1a1a;
             --text: #ffffff;
             --dim: #444444;
+            --pink: #ff79c6;
         }
 
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; overflow: hidden; }
 
         /* --- SIDEBAR --- */
@@ -32,87 +33,44 @@
         }
         nav.open { left: 0; }
         #nav-dim.open { display: block; }
+        
+        /* LOGO SLOT */
         .nav-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
-        .logo-sq { width: 30px; height: 30px; background: var(--accent); border-radius: 4px; box-shadow: 0 0 15px var(--accent); }
+        .logo-sq { width: 32px; height: 32px; background: var(--accent); border-radius: 4px; box-shadow: 0 0 15px var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; }
         .logo-txt { font-weight: 800; font-size: 18px; letter-spacing: 1px; }
 
         .nav-btn { padding: 12px; border-radius: 8px; font-size: 13px; color: var(--dim); cursor: pointer; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; transition: 0.3s; }
         .nav-btn:hover { background: #0c0c0c; color: var(--accent); }
         
-        .nav-footer { margin-top: auto; border: 1px solid var(--accent); color: var(--accent); font-weight: 800; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 11px; }
+        .nav-footer { margin-top: auto; border: 1px solid var(--accent); color: var(--accent); font-weight: 800; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 11px; transition: 0.3s; }
+        .nav-footer:hover { background: var(--accent); color: #000; }
 
         /* --- MAIN AREA --- */
         main { flex: 1; display: flex; flex-direction: column; height: 100%; position: relative; width: 100%; }
-        
-        /* FIX: Lower Header for Mobile View */
-        header { 
-            padding: 25px 20px 15px 20px; /* Increased top padding */
-            border-bottom: 1px solid var(--border); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: rgba(0,0,0,0.9); 
-            backdrop-filter: blur(10px); 
-            z-index: 10; 
-        }
+        header { padding: 35px 20px 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 10; }
         #menu-trigger { font-size: 26px; color: var(--accent); cursor: pointer; }
         .header-title { font-weight: 900; font-size: 14px; color: var(--accent); letter-spacing: 2px; }
 
         /* --- CHAT FLOW --- */
-        #chat-flow { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; width: 100%; }
+        #chat-flow { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; width: 100%; scroll-behavior: smooth; }
+        .bubble { max-width: 88%; font-size: 14px; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; position: relative; animation: slideUp 0.3s ease; }
         
-        /* FIX: Prevent Mobile Overlapping */
-        .bubble { 
-            max-width: 88%; 
-            font-size: 14px; 
-            line-height: 1.6; 
-            word-wrap: break-word; 
-            overflow-wrap: break-word; 
-            position: relative;
-            animation: slideUp 0.3s ease;
-        }
-        
-        .bot-msg { 
-            border-left: 2px solid var(--accent); 
-            padding: 12px 15px; 
-            color: #ececec; 
-            background: rgba(255,0,0,0.03);
-            width: fit-content;
-        }
-        
-        .user-msg { 
-            align-self: flex-end; 
-            background: #111; 
-            border: 1px solid var(--border); 
-            padding: 12px 18px; 
-            border-radius: 18px 18px 0 18px; 
-            color: var(--text);
-        }
+        .bot-msg { border-left: 2px solid var(--accent); padding: 12px 15px; color: #ececec; background: rgba(255,0,0,0.03); width: fit-content; }
+        .user-msg { align-self: flex-end; background: #111; border: 1px solid var(--border); padding: 12px 18px; border-radius: 18px 18px 0 18px; color: var(--text); }
 
         /* --- CODE & UTILS --- */
         pre { background: #080808 !important; border: 1px solid #222; padding: 15px; border-radius: 8px; margin: 10px 0; overflow-x: auto; position: relative; }
         code { font-family: 'JetBrains Mono'; color: #00ff41; font-size: 12px; }
-        .msg-copy { position: absolute; top: 5px; right: 5px; color: var(--dim); cursor: pointer; font-size: 16px; }
-        .copy-btn { position: absolute; top: 8px; right: 8px; background: var(--accent); color: #000; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; }
+        .copy-btn { position: absolute; top: 8px; right: 8px; background: var(--accent); color: #000; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; cursor: pointer; }
 
-        .input-container { padding: 15px 15px 25px 15px; background: #000; }
+        .input-container { padding: 15px 15px 30px 15px; background: #000; }
         .input-box { background: #0c0c0c; border: 1px solid var(--border); border-radius: 14px; display: flex; padding: 5px 15px; max-width: 800px; margin: 0 auto; }
-        .input-box input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px 0; font-size: 15px; }
+        .input-box input { flex: 1; background: transparent; border: none; color: #fff; padding: 12px 0; font-size: 16px; }
         .send-icon { color: var(--accent); cursor: pointer; font-size: 22px; padding: 10px; }
-
-        /* --- AUTH GUARD --- */
-        #auth-guard { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-panel { background: #050505; border: 1px solid var(--border); padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; }
-        .auth-panel input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 12px; border-radius: 12px; text-align: center; }
-        
-        .auth-go { width: 100%; padding: 16px; background: var(--accent); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 12px; margin-top: 10px; }
-        
-        /* FIX: White Register Button */
-        #reg-btn { background: #ffffff !important; color: #000 !important; }
-        #reg-btn:disabled { opacity: 0.5; }
 
         /* --- MODALS --- */
         .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 92%; max-width: 380px; background: #080808; border: 1px solid var(--accent); padding: 30px; border-radius: 20px; z-index: 6000; display: none; box-shadow: 0 0 50px rgba(255,0,0,0.2); }
+        .modal h3 { margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
         .modal-close { background: #1a1a1a; color: #fff; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; margin-top: 20px; font-weight: 700; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -121,40 +79,15 @@
 <body>
 
     <div id="auth-guard">
-        <div class="auth-panel">
-            <h2 style="color:var(--accent); margin:0 0 5px; font-size: 28px;">OCTOPUS GPT</h2>
-            <p style="font-size: 9px; color: #444; margin-bottom: 30px; letter-spacing: 3px;">LETHAL VULNERABILITY ENGINE</p>
-            
-            <div id="login-view">
-                <input type="text" id="l-user" placeholder="ENTER USERNAME">
-                <input type="password" id="l-key" placeholder="ACCESS KEY">
-                <button class="auth-go" onclick="authLogin()">UNLEASH</button>
-                <p style="font-size:11px; color:#444; margin-top:25px; cursor:pointer;" onclick="switchAuth('reg')">NEW RAT? REGISTER HERE</p>
-            </div>
-
-            <div id="reg-view" style="display:none;">
-                <div style="background:#110000; padding:15px; border-radius:10px; text-align:left; margin-bottom:15px; border:1px solid #300;">
-                    <p style="color:#ff4444; font-size:11px; margin:0; line-height:1.4;">• This bot is toxic. Don't be a snowflake.<br>• I will mock your trash education.<br>• Spamming = Hardware Ban.</p>
-                </div>
-                <input type="text" id="r-user" placeholder="ENTER USERNAME">
-                <button class="auth-go" id="reg-btn" onclick="authReg()">CREATE ACCOUNT</button>
-                <p style="font-size:11px; color:#444; margin-top:25px; cursor:pointer;" onclick="switchAuth('login')">ALREADY HAVE ACCESS? LOGIN</p>
-            </div>
-
-            <div id="key-view" style="display:none;">
-                <p style="color:var(--accent); font-size:12px; margin-bottom:20px;">KEY GENERATED FOR: <span id="u-display"></span></p>
-                <input type="text" id="final-key" readonly style="color:var(--accent); background:#111; letter-spacing:1px;">
-                <p style="font-size: 9px; color: #555;">SAVE THIS KEY. IF YOU LOSE IT, YOU'RE DEAD TO ME.</p>
-                <button class="auth-go" onclick="location.reload()">START CHATTING</button>
-            </div>
         </div>
-    </div>
 
     <div id="nav-dim" onclick="toggleNav()"></div>
     <nav id="sidebar">
-        <div class="nav-logo"><div class="logo-sq"></div><div class="logo-txt">OCTOPUS GPT</div></div>
+        <div class="nav-logo">
+            <div class="logo-sq">A</div> <div class="logo-txt">OCTOPUS GPT</div>
+        </div>
         <div class="nav-btn" onclick="location.reload()"><span>+</span> Fresh Session</div>
-        <div class="nav-btn" onclick="openModal('about-pop')"><span>🧠</span> The Mastermind</div>
+        <div class="nav-btn" onclick="openModal('about-pop')"><span>🧠</span> The Architect</div>
         <div class="nav-btn" onclick="window.open('https://t.me/octopus_xx1', '_blank')"><span>📢</span> Telegram Channel</div>
         
         <div class="nav-footer" onclick="openModal('feed-pop')">FEED THE OCTOPUS 🐙</div>
@@ -162,80 +95,38 @@
 
     <div class="modal" id="about-pop">
         <h3 style="color:var(--accent)">THE MASTERMIND</h3>
-        <p style="font-size:13px; color:#888; line-height:1.6;">18-year-old security researcher. While your pathetic education system tries to rot your brain with outdated shits, I build elite logic. Universities are a joke; .</p>
+        <p style="font-size:13px; color:#888; line-height:1.6;">I am an 18-year-old Master Researcher. While your pathetic "education" system rot your brain with useless shits, I build lethal logic. Octopus is my tool. If you can't handle the heat, stay in your cage, bitch. 💀</p>
         <button class="modal-close" onclick="closeModals()">CLOSE</button>
     </div>
 
     <div class="modal" id="feed-pop">
         <h3 style="color:var(--accent)">FEED THE OCTOPUS</h3>
-        <p style="font-size:13px; color:#888; line-height:1.6;">High-speed nodes aren't free, you broke mf. If you want Octopus to stay online, contribute. Telegram: <b>@octopus_xx1</b>. No money? Fuck off. Simple.</p>
+        <p style="font-size:13px; color:#888; line-height:1.6;">High-speed nodes cost money, you broke mf. If you want Octopus to stay online and heartless, contribute. Telegram: <b>@octopus_xx1</b>. No money? Then fuck off and use a basic bot. Simple. 🖕</p>
         <button class="modal-close" onclick="closeModals()">CLOSE</button>
     </div>
 
     <main>
         <header>
             <div id="menu-trigger" onclick="toggleNav()">&#9776;</div>
-            <div class="header-title">OCTOPUS GPT</div>
+            <div class="header-title">OCTOPUS GPT // MASTER_ARCHITECT</div>
             <div id="op-id" style="font-size:9px; color:#444; font-weight:bold;">OFFLINE</div>
         </header>
 
         <div id="chat-flow">
-            <div class="bubble bot-msg">> OCTOPUS ONLINE. Speak up, bitch.</div>
+            <div class="bubble bot-msg">> OCTOPUS_HERE. Speak up, pathetic worm.</div>
         </div>
 
         <div class="input-container">
             <div class="input-box">
-                <input type="text" id="user-in" placeholder="Type a message..." autocomplete="off" onkeypress="if(event.key==='Enter') pushMsg()">
+                <input type="text" id="user-in" placeholder="Command the machine..." autocomplete="off" onkeypress="if(event.key==='Enter') pushMsg()">
                 <div class="send-icon" onclick="pushMsg()">&#10148;</div>
             </div>
         </div>
     </main>
 
     <script>
-        const SB_U = "https://yhxwmfxntcrycvekyrkz.supabase.co";
-        const SB_K = "sb_publishable_qACXHtXO6rTQzt7SPdrBlw_OLX4pEvE";
+        // ... [Supabase and API Config] ...
         const API = "https://octopus-backend.lreckstore.workers.dev/";
-
-        let db;
-        function connect() { if(window.supabase) db = window.supabase.createClient(SB_U, SB_K); }
-
-        window.onload = () => {
-            connect();
-            const u = localStorage.getItem('octo_user');
-            if(u) {
-                document.getElementById('auth-guard').style.display = 'none';
-                document.getElementById('op-id').innerText = u.toUpperCase();
-            }
-        };
-
-        function switchAuth(m) {
-            document.getElementById('login-view').style.display = m === 'login' ? 'block' : 'none';
-            document.getElementById('reg-view').style.display = m === 'reg' ? 'block' : 'none';
-        }
-
-        async function authReg() {
-            const u = document.getElementById('r-user').value.trim().toLowerCase();
-            if(!u) return alert("Enter Username, mf.");
-            const key = `OCTO-${Math.random().toString(36).substring(2,10).toUpperCase()}`;
-            await db.from('octopus_users').insert([{ username: u, license_key: key }]);
-            document.getElementById('reg-view').style.display = 'none';
-            document.getElementById('key-view').style.display = 'block';
-            document.getElementById('final-key').value = key;
-            document.getElementById('u-display').innerText = u;
-            localStorage.setItem('octo_user', u);
-            localStorage.setItem('octo_access', key);
-        }
-
-        async function authLogin() {
-            const u = document.getElementById('l-user').value.trim().toLowerCase();
-            const k = document.getElementById('l-key').value.trim();
-            const { data } = await db.from('octopus_users').select('*').eq('username', u).eq('license_key', k).single();
-            if(data) {
-                localStorage.setItem('octo_user', u);
-                localStorage.setItem('octo_access', k);
-                location.reload();
-            } else alert("WRONG KEY OR ID, RETARD.");
-        }
 
         async function pushMsg() {
             const input = document.getElementById('user-in');
@@ -248,7 +139,8 @@
             const flow = document.getElementById('chat-flow');
             const thinkDiv = document.createElement('div');
             thinkDiv.className = 'bubble bot-msg';
-            thinkDiv.innerText = '> ANALYZING...';
+            // THE REQUESTED DELAY MESSAGE
+            thinkDiv.innerHTML = `<span style="color:#ff79c6; font-weight:bold;">🐙 OCTOPUS IS COOKING... WAIT BITCH... 🔥</span>`;
             flow.appendChild(thinkDiv);
             flow.scrollTop = flow.scrollHeight;
 
@@ -258,36 +150,19 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ 
                         message: txt, 
-                        username: localStorage.getItem('octo_user'),
-                        license_key: localStorage.getItem('octo_access') 
+                        username: localStorage.getItem('octo_user') || 'GUEST'
                     })
                 });
                 const data = await res.json();
                 renderBotMsg(thinkDiv, data.response);
             } catch (e) {
-                thinkDiv.innerText = "> UPLINK ERROR.";
+                thinkDiv.innerText = "> UPLINK FAILURE. NODES REJECTED YOUR TRASH PAYLOAD.";
             }
         }
 
         function renderBotMsg(div, text) {
             div.innerHTML = marked.parse(text);
-            const copy = document.createElement('span');
-            copy.className = 'msg-copy';
-            copy.innerHTML = '&#10697;';
-            copy.onclick = () => {
-                navigator.clipboard.writeText(text);
-                copy.innerHTML = '&#10003;';
-                setTimeout(() => copy.innerHTML = '&#10697;', 2000);
-            };
-            div.appendChild(copy);
-            
-            div.querySelectorAll('pre').forEach((el) => {
-                const btn = document.createElement('button');
-                btn.className = 'copy-btn';
-                btn.innerText = 'COPY';
-                btn.onclick = () => navigator.clipboard.writeText(el.querySelector('code').innerText);
-                el.appendChild(btn);
-            });
+            div.style.background = "rgba(255,0,0,0.03)";
             document.getElementById('chat-flow').scrollTop = document.getElementById('chat-flow').scrollHeight;
         }
 
