@@ -150,6 +150,7 @@
     </main>
 
     <script>
+        // REPLACE THESE WITH YOUR ACTUAL KEYS IF THEY CHANGE
         const SB_U = "https://yhxwmfxntcrycvekyrkz.supabase.co";
         const SB_K = "sb_publishable_qACXHtXO6rTQzt7SPdrBlw_OLX4pEvE";
         const db = supabase.createClient(SB_U, SB_K);
@@ -180,12 +181,19 @@
 
             const devID = getDeviceID();
             
-            // Check Hardware Ban
+            // Check if device ID is in the banned_list table
             const { data: banned } = await db.from('banned_list').select('*').eq('device_id', devID).single();
             if(banned) { alert("HARDWARE BANNED. FUCK OFF. 💀"); return; }
 
             const key = `OCTO-${Math.random().toString(36).substring(2,10).toUpperCase()}`;
-            const { error } = await db.from('octopus_users').insert([{ username: u, license_key: key, device_id: devID, status: 'active' }]);
+            
+            // Inserting into octopus_users with your exact columns
+            const { error } = await db.from('octopus_users').insert([{ 
+                username: u, 
+                license_key: key, 
+                device_id: devID, 
+                is_banned: false 
+            }]);
             
             if(!error) {
                 document.getElementById('reg-inputs').style.display = 'none';
@@ -209,7 +217,8 @@
             const { data } = await db.from('octopus_users').select('*').eq('username', u).eq('license_key', k).single();
             
             if(data) {
-                if(data.status === 'banned') { alert("USERNAME BANNED. 🐙🔥"); return; }
+                // Fixed to match your boolean 'is_banned' column
+                if(data.is_banned === true) { alert("USERNAME BANNED. 🐙🔥"); return; }
                 localStorage.setItem('octo_user', u); 
                 location.reload(); 
             } else { alert("WRONG KEY, RETARD."); }
