@@ -61,6 +61,9 @@
         .bubble { max-width: 88%; font-size: 14px; line-height: 1.6; word-wrap: break-word; position: relative; animation: slideUp 0.3s ease; }
         .bot-msg { border-left: 2px solid var(--accent); padding: 12px 15px; color: #ececec; background: rgba(255,0,0,0.03); width: fit-content; }
         .user-msg { align-self: flex-end; background: #111; border: 1px solid var(--border); padding: 12px 18px; border-radius: 18px 18px 0 18px; color: var(--text); }
+        
+        /* Octopus Alert Card */
+        .octo-card { border: 1px solid var(--accent); background: #110000; padding: 15px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 13px; line-height: 1.4; }
 
         pre { background: #0d0d0d !important; border: 1px solid #222; padding: 15px; border-radius: 8px; margin: 10px 0; overflow-x: auto; }
         code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #d4d4d4; }
@@ -150,7 +153,6 @@
     </main>
 
     <script>
-        // REPLACE THESE WITH YOUR ACTUAL KEYS IF THEY CHANGE
         const SB_U = "https://yhxwmfxntcrycvekyrkz.supabase.co";
         const SB_K = "sb_publishable_qACXHtXO6rTQzt7SPdrBlw_OLX4pEvE";
         const db = supabase.createClient(SB_U, SB_K);
@@ -167,6 +169,15 @@
             }
         };
 
+        function addOctoCard(msg) {
+            const flow = document.getElementById('chat-flow');
+            const card = document.createElement('div');
+            card.className = 'bubble bot-msg octo-card';
+            card.innerHTML = `⚠️ SYSTEM MESSAGE:<br>${msg}`;
+            flow.appendChild(card);
+            flow.scrollTop = flow.scrollHeight;
+        }
+
         function switchAuth(m) {
             document.getElementById('login-view').style.display = (m === 'login') ? 'block' : 'none';
             document.getElementById('reg-view').style.display = (m === 'reg') ? 'block' : 'none';
@@ -178,16 +189,12 @@
         async function authReg() {
             const u = document.getElementById('r-user').value.trim().toLowerCase();
             if(!u) return;
-
             const devID = getDeviceID();
             
-            // Check if device ID is in the banned_list table
             const { data: banned } = await db.from('banned_list').select('*').eq('device_id', devID).single();
             if(banned) { alert("HARDWARE BANNED. FUCK OFF. 💀"); return; }
 
             const key = `OCTO-${Math.random().toString(36).substring(2,10).toUpperCase()}`;
-            
-            // Inserting into octopus_users with your exact columns
             const { error } = await db.from('octopus_users').insert([{ 
                 username: u, 
                 license_key: key, 
@@ -217,7 +224,6 @@
             const { data } = await db.from('octopus_users').select('*').eq('username', u).eq('license_key', k).single();
             
             if(data) {
-                // Fixed to match your boolean 'is_banned' column
                 if(data.is_banned === true) { alert("USERNAME BANNED. 🐙🔥"); return; }
                 localStorage.setItem('octo_user', u); 
                 location.reload(); 
@@ -230,6 +236,17 @@
             const input = document.getElementById('user-in');
             const txt = input.value.trim();
             if(!txt) return;
+
+            // --- REAL-TIME BAN CHECK ---
+            const currentUser = localStorage.getItem('octo_user');
+            const { data: statusCheck } = await db.from('octopus_users').select('is_banned').eq('username', currentUser).single();
+            
+            if(statusCheck && statusCheck.is_banned === true) {
+                addOctoCard("YOUR ACCESS HAS BEEN REVOKED BY THE MASTERMIND. 💀");
+                setTimeout(() => logout(), 3000);
+                return;
+            }
+
             addBubble(txt, 'user-msg');
             input.value = '';
             const flow = document.getElementById('chat-flow');
