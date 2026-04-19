@@ -36,6 +36,12 @@
         .terms-box { background:#110000; padding:15px; border-radius:10px; text-align:left; margin-bottom:15px; border:1px solid #300; }
         .terms-box p { color:#ff4444; font-size:11px; margin:0; line-height:1.4; }
 
+        /* --- KEY DISPLAY CARD (NEW) --- */
+        #key-card-container { display: none; margin-top: 20px; border: 1px solid #333; background: #0a0a0a; padding: 20px; border-radius: 15px; animation: slideUp 0.4s ease; }
+        .key-title { color: var(--accent); font-weight: 800; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
+        .key-display { background: #000; border: 1px dashed var(--accent); padding: 15px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 18px; margin-bottom: 15px; word-break: break-all; }
+        .copy-btn { width: 100%; padding: 12px; background: #fff; color: #000; font-weight: 800; border: none; border-radius: 8px; cursor: pointer; }
+
         /* --- SIDEBAR --- */
         #nav-dim { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; backdrop-filter: blur(8px); }
         nav { 
@@ -89,22 +95,33 @@
     <div id="auth-guard">
         <div class="auth-panel">
             <h2 style="color:var(--accent); margin:0 0 5px; font-size: 28px;">OCTOPUS GPT</h2>
-            <p style="font-size: 9px; color: #444; margin-bottom: 30px; letter-spacing: 3px;">LETHAL VULNERABILITY ENGINE</p>
+            <p style="font-size: 9px; color: #444; margin-bottom: 30px; letter-spacing: 3px;">THE MASTERMIND 19s</p>
             
             <div id="login-view">
                 <input type="text" id="l-user" placeholder="ENTER USERNAME">
                 <input type="password" id="l-key" placeholder="ACCESS KEY">
-                <button class="auth-go" onclick="authLogin()">UNLEASH</button>
-                <p style="font-size:11px; color:#444; margin-top:25px; cursor:pointer;" onclick="switchAuth('reg')">NEW RAT? REGISTER HERE</p>
+                <button class="auth-go" onclick="authLogin()">START CHAT</button>
+                <p style="font-size:11px; color:#444; margin-top:25px; cursor:pointer;" onclick="switchAuth('reg')">NEW USER? REGISTER HERE</p>
             </div>
 
             <div id="reg-view" style="display:none;">
-                <div class="terms-box">
+                <div class="terms-box" id="terms-container">
                     <p>• This bot is toxic. Don't be a snowflake.<br>• I will mock your trash education.<br>• Spamming = Hardware Ban.</p>
                 </div>
-                <input type="text" id="r-user" placeholder="CHOOSE USERNAME">
-                <button class="auth-go" id="reg-btn" style="background:#fff; color:#000;" onclick="authReg()">CREATE ACCOUNT</button>
-                <p style="font-size:11px; color:#444; margin-top:25px; cursor:pointer;" onclick="switchAuth('login')">ALREADY HAVE ACCESS? LOGIN</p>
+                
+                <div id="reg-inputs">
+                    <input type="text" id="r-user" placeholder="CHOOSE USERNAME">
+                    <button class="auth-go" id="reg-btn" style="background:#fff; color:#000;" onclick="authReg()">CREATE ACCOUNT</button>
+                    <p style="font-size:11px; color:#444; margin-top:25px; cursor:pointer;" onclick="switchAuth('login')">BACK TO LOGIN</p>
+                </div>
+
+                <div id="key-card-container">
+                    <div class="key-title">⚠️ SCREENSHOT OR COPY THIS IDIOT</div>
+                    <div class="key-display" id="generated-key-box">OCTO-XXXX</div>
+                    <p style="font-size:10px; color:#ff4444; margin-bottom:15px; font-weight:bold;">LOSE THIS AND YOU LOSE ACCESS FOREVER. I DON'T RECOVER SHIT.</p>
+                    <button class="copy-btn" id="copy-btn-action" onclick="copyKey()">COPY ACCESS KEY</button>
+                    <button class="auth-go" style="background:#111; color:#fff; border:1px solid #333; margin-top:10px;" onclick="location.reload()">I SAVED IT, LET ME IN</button>
+                </div>
             </div>
         </div>
     </div>
@@ -121,13 +138,13 @@
 
     <div class="modal" id="about-pop">
         <h3 style="color:var(--accent)">THE MASTERMIND</h3>
-        <p style="font-size:13px; color:#888; line-height:1.6;">18-year-old security researcher. While your pathetic education system tries to rot your brain with outdated shits, I build elite logic. Universities are a joke. 💀</p>
+        <p style="font-size:13px; color:#888; line-height:1.6;">18-year-old security researcher. While your pathetic education system tries to rot your brain with outdated shits, I build elite logic. 💀</p>
         <button class="modal-close" onclick="closeModals()">CLOSE</button>
     </div>
 
     <div class="modal" id="feed-pop">
         <h3 style="color:var(--accent)">FEED THE OCTOPUS</h3>
-        <p style="font-size:13px; color:#888; line-height:1.6;">High-speed nodes aren't free, you broke mf. If you want Octopus to stay online, contribute. Telegram: <b>@octopus_xx1</b>. No money? Fuck off. Simple.</p>
+        <p style="font-size:13px; color:#888; line-height:1.6;">Maintaining High-speed Servers aren't free, you broke mf. If you want Octopus to stay online, contribute. Telegram: <b>@octopus_xx1</b>. No money? Fuck off. Simple.</p>
         <button class="modal-close" onclick="closeModals()">CLOSE</button>
     </div>
 
@@ -139,7 +156,7 @@
         </header>
 
         <div id="chat-flow">
-            <div class="bubble bot-msg">> OCTOPUS ONLINE. Speak up, bitch.</div>
+            <div class="bubble bot-msg">> OCTOPUS ACTIVE Speak up, BUDDY</div>
         </div>
 
         <div class="input-container">
@@ -166,14 +183,36 @@
         function switchAuth(m) {
             document.getElementById('login-view').style.display = (m === 'login') ? 'block' : 'none';
             document.getElementById('reg-view').style.display = (m === 'reg') ? 'block' : 'none';
+            // Reset reg view if coming back
+            document.getElementById('reg-inputs').style.display = 'block';
+            document.getElementById('key-card-container').style.display = 'none';
+            document.getElementById('terms-container').style.display = 'block';
         }
 
         async function authReg() {
             const u = document.getElementById('r-user').value.trim().toLowerCase();
+            if(!u) return;
             const key = `OCTO-${Math.random().toString(36).substring(2,10).toUpperCase()}`;
-            await db.from('octopus_users').insert([{ username: u, license_key: key }]);
-            alert(`SAVE YOUR ACCESS KEY: ${key}`);
-            location.reload();
+            
+            const { error } = await db.from('octopus_users').insert([{ username: u, license_key: key }]);
+            
+            if(!error) {
+                document.getElementById('reg-inputs').style.display = 'none';
+                document.getElementById('terms-container').style.display = 'none';
+                document.getElementById('key-card-container').style.display = 'block';
+                document.getElementById('generated-key-box').innerText = key;
+            } else {
+                alert("USERNAME TAKEN OR DB ERROR.");
+            }
+        }
+
+        function copyKey() {
+            const key = document.getElementById('generated-key-box').innerText;
+            navigator.clipboard.writeText(key);
+            const btn = document.getElementById('copy-btn-action');
+            btn.innerText = "COPIED! NOW DON'T LOSE IT.";
+            btn.style.background = "#ff0000";
+            btn.style.color = "#000";
         }
 
         async function authLogin() {
@@ -209,7 +248,6 @@
                 });
                 const data = await res.json();
                 
-                // Render and Highlight
                 thinkDiv.innerHTML = marked.parse(data.response);
                 thinkDiv.querySelectorAll('pre code').forEach((block) => {
                     let text = block.innerHTML;
