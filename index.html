@@ -63,17 +63,17 @@
         .bot-msg { border-left: 2px solid var(--accent); padding: 12px 15px; color: #ececec; background: rgba(255,0,0,0.03); width: fit-content; }
         .user-msg { align-self: flex-end; background: #111; border: 1px solid var(--border); padding: 12px 18px; border-radius: 18px 18px 0 18px; color: var(--text); }
         
-        /* Message Action Buttons */
-        .msg-actions { display: flex; gap: 12px; margin-top: 8px; opacity: 0.5; transition: 0.3s; }
-        .bubble:hover .msg-actions { opacity: 1; }
-        .action-link { font-size: 10px; font-weight: 800; color: var(--accent); cursor: pointer; text-transform: uppercase; text-decoration: none; }
+        /* Bot Message Actions */
+        .msg-actions { display: flex; gap: 12px; margin-top: 8px; opacity: 0.4; transition: 0.3s; }
+        .bot-msg:hover .msg-actions { opacity: 1; }
+        .action-link { font-size: 10px; font-weight: 800; color: var(--accent); cursor: pointer; text-transform: uppercase; }
         .action-link:hover { text-decoration: underline; }
 
-        /* Code Block Styling */
+        /* Code Block Copy Feature */
         pre { background: #0d0d0d !important; border: 1px solid #222; padding: 15px; border-radius: 8px; margin: 10px 0; overflow-x: auto; position: relative; }
-        .code-header { position: absolute; top: 5px; right: 5px; display: flex; }
-        .copy-code-btn { background: #1a1a1a; color: #fff; border: 1px solid #333; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: 800; }
-        .copy-code-btn:hover { background: var(--accent); color: #000; }
+        .code-header { position: absolute; top: 8px; right: 8px; z-index: 5; }
+        .copy-code-btn { background: #1a1a1a; color: #fff; border: 1px solid #333; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: 800; transition: 0.2s; }
+        .copy-code-btn:hover { background: var(--accent); color: #000; border-color: var(--accent); }
 
         code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #d4d4d4; }
         .kw { color: var(--vs-kw); } .fn { color: var(--vs-fn); } .st { color: var(--vs-st); } .co { color: var(--vs-co); }
@@ -207,16 +207,12 @@
             const u = document.getElementById('r-user').value.trim().toLowerCase();
             if(!u) return;
             const devID = getDeviceID();
-            
             const { data: banned } = await db.from('banned_list').select('*').eq('device_id', devID).single();
             if(banned) { alert("HARDWARE BANNED. FUCK OFF. 💀"); return; }
 
             const key = `OCTO-${Math.random().toString(36).substring(2,10).toUpperCase()}`;
             const { error } = await db.from('octopus_users').insert([{ 
-                username: u, 
-                license_key: key, 
-                device_id: devID, 
-                is_banned: false 
+                username: u, license_key: key, device_id: devID, is_banned: false 
             }]);
             
             if(!error) {
@@ -231,7 +227,7 @@
             const key = document.getElementById('generated-key-box').innerText;
             navigator.clipboard.writeText(key);
             const btn = document.getElementById('copy-btn-action');
-            btn.innerText = "COPIED! NOW DON'T LOSE IT.";
+            btn.innerText = "COPIED!";
             btn.style.background = "#ff0000";
         }
 
@@ -239,17 +235,16 @@
             const u = document.getElementById('l-user').value.trim().toLowerCase();
             const k = document.getElementById('l-key').value.trim();
             const { data } = await db.from('octopus_users').select('*').eq('username', u).eq('license_key', k).single();
-            
             if(data) {
                 if(data.is_banned === true) { alert("USERNAME BANNED. 🐙🔥"); return; }
                 localStorage.setItem('octo_user', u); 
                 location.reload(); 
-            } else { alert("WRONG KEY, RETARD."); }
+            } else { alert("WRONG KEY."); }
         }
 
         function logout() { localStorage.clear(); location.reload(); }
 
-        // --- NEW HELPER FUNCTIONS ---
+        // --- UTILITY LOGIC ---
         function copyMsg(el) {
             const text = el.closest('.bubble').querySelector('.msg-content').innerText;
             navigator.clipboard.writeText(text);
@@ -278,9 +273,8 @@
 
             const currentUser = localStorage.getItem('octo_user');
             const { data: statusCheck } = await db.from('octopus_users').select('is_banned').eq('username', currentUser).single();
-            
             if(statusCheck && statusCheck.is_banned === true) {
-                addOctoCard("YOUR ACCESS HAS BEEN REVOKED BY THE MASTERMIND. 💀");
+                addOctoCard("ACCESS REVOKED. 💀");
                 setTimeout(() => logout(), 3000);
                 return;
             }
@@ -291,7 +285,7 @@
             
             const thinkDiv = document.createElement('div');
             thinkDiv.className = 'bubble bot-msg';
-            thinkDiv.innerHTML = `<span style="color:var(--pink)">🐙 OCTOPUS IS COOKING... WAIT BITCH... 🔥</span>`;
+            thinkDiv.innerHTML = `<span style="color:var(--pink)">🐙 COOKING... 🔥</span>`;
             flow.appendChild(thinkDiv);
             flow.scrollTop = flow.scrollHeight;
 
@@ -303,7 +297,7 @@
                 });
                 const data = await res.json();
                 
-                // Format response with Markdown and Action Buttons
+                // Bot Response with Actions
                 thinkDiv.innerHTML = `
                     <div class="msg-content">${marked.parse(data.response)}</div>
                     <div class="msg-actions">
@@ -312,7 +306,7 @@
                     </div>
                 `;
 
-                // Handle Code Syntax and Copy Buttons
+                // Add Copy Buttons to Code Blocks and Highlight
                 thinkDiv.querySelectorAll('pre').forEach((pre) => {
                     const btnHtml = `<div class="code-header"><button class="copy-code-btn" onclick="copyCode(this)">COPY</button></div>`;
                     pre.insertAdjacentHTML('afterbegin', btnHtml);
@@ -334,13 +328,8 @@
             const flow = document.getElementById('chat-flow');
             const div = document.createElement('div');
             div.className = `bubble ${cls}`;
-            div.innerHTML = `
-                <div class="msg-content">${text}</div>
-                <div class="msg-actions">
-                    <span class="action-link" onclick="copyMsg(this)">Copy</span>
-                    <span class="action-link" onclick="replyMsg(this)">Reply</span>
-                </div>
-            `;
+            // User bubble only has text content, no reply/copy links
+            div.innerHTML = `<div class="msg-content">${text}</div>`;
             flow.appendChild(div);
             flow.scrollTop = flow.scrollHeight;
         }
